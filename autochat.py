@@ -1,6 +1,5 @@
 import pyautogui as au
 from PIL import Image
-import pytesseract as ocr
 import ollama as ai
 from time import sleep
 import pyperclip
@@ -9,7 +8,6 @@ import cv2
 from skimage.metrics import structural_similarity as ssim
 import os
 
-ocr.pytesseract.tesseract_cmd = r"E:\OCR\tesseract.exe"
 aimodel = 'qwen2.5:0.5b'
 capreg = (430, 400, 1000, 440)
 SYSMSG = """
