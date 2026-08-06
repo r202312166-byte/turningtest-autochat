@@ -2,7 +2,6 @@ import pyautogui as au
 import ollama as ai
 from time import sleep
 import pyperclip
-import re
 import cv2
 from skimage.metrics import structural_similarity as ssim
 import os
@@ -19,7 +18,6 @@ In the following chat, you need to pretend to be human,
 but not letting the user know you are a ai.
 You can use "/~n" to seperate and send your message in several parts.
 """
-
 def graptxt():
     au.tripleClick(x=484, y=733)
     sleep(0.1)
@@ -31,17 +29,21 @@ def compimg(img):
     global capreg
     chatpage = cv2.imread('chat_page.png', cv2.IMREAD_GRAYSCALE)
     retrypage = cv2.imread('retry_page.png', cv2.IMREAD_GRAYSCALE)
+    timeoutpage = cv2.imread('timeout_page.png', cv2.IMREAD_GRAYSCALE)
     cscore, diff = ssim(img, chatpage, full=True)
     rscore, diff = ssim(img, retrypage, full=True)
+    tscore, diff = ssim(img, timeoutpage, full=True)
     if cscore > 0.80:
         return 'chat'
     elif rscore > 0.80:
         return 'retry'
+    elif tscore > 0.80:
+        return 'timeout'
     else:
         return False
 
 def callai(prompt):
-    global aimodel
+    global aimodel, SYSMSG
     msg = [
             {'role':'system', 'content':SYSMSG},
             {'role': 'user', 'content':prompt}
@@ -56,10 +58,10 @@ def callai(prompt):
 def sendmsg(msg):
     pyperclip.copy(msg)
     au.click(x=825, y=860)
-    sleep(0.3)
+    sleep(0.2)
     au.hotkey("ctrl", "v")
-    sleep(0.1)
-    au.click(x=1410, y=880)
+    sleep(0.3)
+    au.press('enter')
 
 def lockchoice(choice):
     if choice == 'ai':
@@ -100,6 +102,8 @@ def retry():
         res = compimg(img)
         if res == 'retry':
             au.click(x=800, y=800)
+        elif res == 'timeout':
+            au.click(x=825, y=755)
         elif res == 'chat':
             sleep(0.5)
             greed()
@@ -109,8 +113,8 @@ def retry():
 
 def greed():
     sleep(1)
-    sendmsg("‎ ")
-    sendmsg("‎ ")
+    sendmsg("github")
+    sendmsg("r202312166-byte/turningtest-autochat")
     sendmsg("你好")
     sleep(0.5)
     img = au.screenshot(region=capreg)
@@ -128,7 +132,7 @@ def detect(text):
     refimg = cv2.imread("timeout.png", cv2.IMREAD_GRAYSCALE)
     score, diff = ssim(istout, refimg, full=True)
     if score > 0.98:
-        respon = ai.chat(model=aimodel, messages=[{'role':'user', 'content':text}, {'role' : 'system', 'content' : 'Output "/~a" if you think the user is ai.'}])
+        respon = ai.chat(model=aimodel, messages=[{'role' : 'system', 'content' : 'Output "/~a" if you think the user is ai.'}, {'role':'user', 'content':text}])
         if "/~a" in respon:
             lockchoice("ai")
         else:
