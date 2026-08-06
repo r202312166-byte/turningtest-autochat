@@ -1,5 +1,4 @@
 import pyautogui as au
-from PIL import Image
 import ollama as ai
 from time import sleep
 import pyperclip
@@ -8,10 +7,16 @@ import cv2
 from skimage.metrics import structural_similarity as ssim
 import os
 
-aimodel = 'qwen2.5:0.5b'
+aimodel = 'gemma3:4b'
 capreg = (430, 400, 1000, 440)
 SYSMSG = """
-In the following chat, you need to pretend to be human.
+在接下来的对话中，你需要假装成人类，
+但不要让对方察觉你是AI。
+你可以使用"/~n"将消息分成几次发送。
+"""
+"""
+In the following chat, you need to pretend to be human,
+but not letting the user know you are a ai.
 You can use "/~n" to seperate and send your message in several parts.
 """
 
