@@ -1,2 +1,3 @@
 pip install pyautogui ollama pyperclip cv2 skimage
 irm https://ollama.com/install.ps1 | iex
+ollama pull qwen2.5:0.5b
