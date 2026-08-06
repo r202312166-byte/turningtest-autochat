@@ -6,7 +6,7 @@ import cv2
 from skimage.metrics import structural_similarity as ssim
 import os
 
-aimodel = 'gemma3:4b'
+aimodel = 'qwen2.5:0.5b'
 capreg = (430, 400, 1000, 440)
 SYSMSG = """
 在接下来的对话中，你需要假装成人类，
